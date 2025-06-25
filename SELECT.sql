@@ -11,7 +11,7 @@ SELECT musical_performer_name FROM musical_performers
 WHERE musical_performer_name not like '% %';
 
 SELECT Music_track_name FROM Music_tracks
-WHERE Music_track_name like '%my%' or Music_track_name like '%мой%';
+WHERE string_to_array(lower(Music_track_name), ' ') && ARRAY['my'];
 
 SELECT COUNT(musical_performer_ID), musical_genre_name FROM musical_performers_musical_genres
 JOIN musical_genres ON musical_performers_musical_genres.musical_genre_ID = musical_genres.musical_genre_id
@@ -26,9 +26,11 @@ JOIN albums ON Music_tracks.album_ID = albums.album_ID
 GROUP BY album_name;
 
 SELECT musical_performer_name FROM musical_performers
-JOIN musical_performers_albums ON musical_performers_albums.musical_performer_ID = musical_performers.musical_performer_ID
-JOIN albums ON albums.album_ID = musical_performers_albums.album_ID
-WHERE album_year_of_release != 2020;
+WHERE musical_performer_name NOT IN (
+    SELECT musical_performer_name FROM musical_performers
+	JOIN musical_performers_albums ON musical_performers_albums.musical_performer_ID = musical_performers.musical_performer_ID
+	JOIN albums ON albums.album_ID = musical_performers_albums.album_ID
+    WHERE album_year_of_release = 2020);
 
 SELECT Collection_name FROM Collection
 JOIN Collection_Music_tracks ON Collection_Music_tracks.Collection_ID = Collection.Collection_ID
@@ -42,7 +44,7 @@ SELECT album_name FROM albums
 JOIN musical_performers_albums ON musical_performers_albums.album_ID = albums.album_ID
 JOIN musical_performers ON musical_performers.musical_performer_ID = musical_performers_albums.musical_performer_ID
 JOIN musical_performers_musical_genres ON musical_performers_musical_genres.musical_performer_ID = musical_performers.musical_performer_ID
-GROUP BY album_name
+GROUP BY album_name, musical_performers_musical_genres.musical_performer_ID 
 HAVING COUNT(musical_performers_musical_genres.musical_performer_ID) > 1;
 
 SELECT Music_track_name FROM Music_tracks
@@ -55,6 +57,21 @@ JOIN albums ON albums.album_ID = musical_performers_albums.album_ID
 JOIN Music_tracks ON Music_tracks.album_ID = albums.album_ID
 WHERE Music_tracks.duration = (SELECT MIN(duration) FROM Music_tracks);
 
+SELECT album_name FROM albums
+JOIN Music_tracks ON Music_tracks.album_ID = albums.album_ID
+group by album_name
+ORDER BY COUNT(Music_tracks.music_track_name)
+limit 1;
+
+SELECT album_name FROM albums
+JOIN Music_tracks ON Music_tracks.album_ID = albums.album_ID
+group by album_name
+HAVING COUNT(Music_tracks.music_track_name) = (
+    SELECT COUNT(Music_track_ID) FROM Music_tracks
+    GROUP BY album_ID
+    ORDER BY 1
+    LIMIT 1
+);
 SELECT album_name FROM albums
 JOIN Music_tracks ON Music_tracks.album_ID = albums.album_ID
 group by album_name
