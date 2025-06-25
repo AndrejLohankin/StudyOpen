@@ -1,0 +1,23 @@
+import psycopg2
+
+
+with psycopg2.connect(database="pythondb2", user="postgres", password="98199819") as conn:
+    with conn.cursor() as cur:
+        # создание таблиц
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS client(
+            id SERIAL PRIMARY KEY,
+            first_name VARCHAR(40) NOT NULL
+            last_name VARCHAR(40) NOT NULL
+            email VARCHAR(40) NOT NULL
+        );
+        """)
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS phone(
+            id SERIAL PRIMARY KEY,
+            number INTEGER NOT NULL,
+            description TEXT NOT NULL,
+            course_id INTEGER NOT NULL REFERENCES course(id)
+        );
+        """)
+        conn.commit()  # фиксируем в БД
