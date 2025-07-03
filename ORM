@@ -11,6 +11,7 @@ class Publisher(Base):
     __tablename__ = "publisher"
     id = sq.Column(sq.Integer, primary_key=True)
     name = sq.Column(sq.String(length=40), unique=True)
+    books = relationship("Book", back_populates="publisher")
 
     def __str__(self):
         return f'Publisher: {self.id}, {self.name}'
@@ -20,20 +21,22 @@ class Book(Base):
     id = sq.Column(sq.Integer, primary_key=True)
     title = sq.Column(sq.Text, nullable=False)
     id_publisher = sq.Column(sq.Integer, sq.ForeignKey("publisher.id"), nullable=False)
-    publisher = relationship(Publisher, backref="book")
-
+    publisher = relationship("Publisher", back_populates="books")
+    stocks = relationship("Stock", back_populates="book")
 
     def __str__(self):
         return f'Book: {self.id}, {self.title}, {self.id_publisher}, {self.publisher}'
+
 
 class Stock(Base):
     __tablename__ = "stock"
     id = sq.Column(sq.Integer, primary_key=True)
     id_book = sq.Column(sq.Integer, sq.ForeignKey("book.id"), nullable=False)
-    book = relationship(Book, backref="stock")
     id_shop = sq.Column(sq.Integer, sq.ForeignKey("shop.id"), nullable=False)
     count = sq.Column(sq.Integer, nullable=False)
-
+    book = relationship("Book", back_populates="stocks")
+    shop = relationship("Shop", back_populates="stocks")
+    sales = relationship("Sale", back_populates="stock")
 
     def __str__(self):
         return f'Stock: {self.id}, {self.id_book}, {self.id_shop}, {self.count}'
@@ -44,7 +47,7 @@ class Sale(Base):
     price = sq.Column(sq.Text, nullable=False)
     date_sale = sq.Column(sq.Date, nullable=False)
     id_stock = sq.Column(sq.Integer, sq.ForeignKey("stock.id"), nullable=False)
-    stock = relationship(Stock, backref="sale")
+    stock = relationship("Stock", back_populates="sales")
     count = sq.Column(sq.Integer, nullable=False)
 
     def __str__(self):
@@ -54,7 +57,7 @@ class Shop(Base):
     __tablename__ = "shop"
     id = sq.Column(sq.Integer, primary_key=True)
     name = sq.Column(sq.String(length=40), unique=True)
-    stock = relationship(Stock, backref="shop")
+    stocks = relationship("Stock", back_populates="shop")
 
     def __str__(self):
         return f'Shop: {self.id}, {self.name}'
@@ -89,73 +92,15 @@ for record in data:
     session.add(model(id=record.get('pk'), **record.get('fields')))
 session.commit()
 
-# создание объектов
-# js = Course(name="JavaScript")
-# print(js.id)
-# hw1 = Homework(number=1, description="первое задание", course=js)
-# hw2 = Homework(number=2, description="второе задание (сложное)", course=js)
 
-# session.add(js)
-# print(js.id)
-# session.add_all([hw1, hw2])
-# session.commit()  # фиксируем изменения
-# print(js.id)
+user_input = input("Введите имя или ID издателя: ")
+# user_input = "O’Reilly"
+Publisher_filter = Publisher.name == user_input
+for title, shop_name, price, date_sale in session.query(Book.title, Shop.name, Sale.price, Sale.date_sale).join(Stock, Stock.id_book == Book.id).join(Shop, Shop.id == Stock.id_shop).join(Sale, Sale.id_stock == Stock.id).join(Publisher, Publisher.id == Book.id_publisher).filter(Publisher_filter).all():
+    print(f"{title} | {shop_name} | {price} | {date_sale }")
+print(session.query(Book.title, Shop.name, Sale.price, Sale.date_sale).join(Stock, Stock.id_book == Book.id).join(Shop, Shop.id == Stock.id_shop).join(Sale, Sale.id_stock == Stock.id).join(Publisher, Publisher.id == Book.id_publisher).filter(Publisher_filter).all())
 
 
-# запросы
-# for el in session.query(Publisher).all():
-#     print(el)
-#
-# for el in session.query(Book).all():
-#     print(el)
-#
-# for el in session.query(Stock).all():
-#     print(el)
-#
-# for el in session.query(Sale).all():
-#     print(el)
-#
-# for el in session.query(Shop).all():
-#     print(el)
-
-# publisher = input("Введите имя автора: ")
-publisher = 'Microsoft Press'
-# for el in session.query(Book).join(Publisher).filter(Publisher.name == publisher).all():
-#     print(el)
-
-# for el in session.query(Book).join(Publisher).filter(Publisher.name==publisher).all():
-#     print(el)
-
-# for el in session.query(Stock).join()
-#     print(el)
-
-stmt = select(Shop, Stock).join(Stock, Shop.id == Stock.id_shop)
-print(stmt)
-
-
-# for s in q.all():
-#     print(s.id, s.name)
-#     for hw in s.homeworks:
-#         print("\t", hw.id, hw.number, hw.description)
-
-# вложенный запрос
-# subq = session.query(Homework).filter(Homework.description.like("%сложн%")).subquery("simple_hw")
-# q = session.query(Course).join(subq, Course.id == subq.c.course_id)
-# print(q)
-# for s in q.all():
-#     print(s.id, s.name)
-#     for hw in s.homeworks:
-#         print("\t", hw.id, hw.number, hw.description)
-
-
-# обновление объектов
-# session.query(Course).filter(Course.name == "JavaScript").update({"name": "NEW JavaScript"})
-# session.commit()  # фиксируем изменения
-
-
-# удаление объектов
-# session.query(Homework).filter(Homework.number > 1).delete()
-# session.commit()  # фиксируем изменения
 
 
 
