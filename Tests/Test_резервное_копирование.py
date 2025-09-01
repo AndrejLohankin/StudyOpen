@@ -133,11 +133,7 @@ class TestYandexDiskAPIRealCalls:
     def test_put_folder_integration(self, yandex_token, unique_folder_name):
         """Интеграционный тест для функции put_folder."""
         try:
-            # Предполагается, что функция print-ит сообщение об успехе
-            # Для теста просто проверим, что она не бросает исключений
             put_folder(unique_folder_name, yandex_token)
-            # Если дойдем до этой точки, функция выполнилась без исключения
-            # Можно добавить дополнительную проверку, например, через API, что папка создана
             list_url = 'https://cloud-api.yandex.net/v1/disk/resources'
             headers = {'Authorization': yandex_token}
             params = {'path': '/'}
@@ -147,3 +143,4 @@ class TestYandexDiskAPIRealCalls:
             assert unique_folder_name in folder_names
         except Exception as e:
             pytest.fail(f"Функция put_folder вызвала исключение: {e}")
+
