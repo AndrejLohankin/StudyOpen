@@ -46,7 +46,6 @@ class Stack:
         return str(self.items)
 
 
-# Пример использования:
 if __name__ == "__main__":
     # Создание стека
     stack = Stack()
@@ -100,4 +99,5 @@ if __name__ == "__main__":
         # Вызываем функцию проверки
         result = stack_2.is_balanced_correct()
         status = "Сбалансированно" if result else "Несбалансированно"
+
         print(f"'{sequence}' -> {status}")
