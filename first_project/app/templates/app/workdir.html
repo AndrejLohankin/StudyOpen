@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Содержимое рабочей директории</title>
+</head>
+<body>
+    <h1>Содержимое рабочей директории</h1>
+    <ul>
+        {% for item in workdir_content %}
+            <li>{{ item }}</li>
+        {% endfor %}
+    </ul>
+    <p><a href="{% url 'home' %}">На главную</a></p>
+</body>
+</html>
