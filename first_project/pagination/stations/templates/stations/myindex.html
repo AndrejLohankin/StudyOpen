@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Остановки общественного транспорта</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .pagination a, .pagination span {
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            text-decoration: none;
+            color: #333;
+        }
+        .pagination a:hover {
+            background-color: #e0e0e0;
+        }
+        .pagination .active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .pagination .disabled {
+            color: #aaa;
+            pointer-events: none;
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <h1>Остановки наземного общественного транспорта</h1>
+
+    {% if bus_stations %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Street</th>
+                    <th>District</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for station in bus_stations %}
+                    <tr>
+                        <td>{{ station.Name }}</td>
+                        <td>{{ station.Street }}</td>
+                        <td>{{ station.District }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Нет данных.</p>
+    {% endif %}
+
+    <div class="pagination">
+        {% if has_previous %}
+            <a href="?page={{ prev_page }}">← Назад</a>
+        {% else %}
+            <span class="disabled">← Назад</span>
+        {% endif %}
+
+        <span class="active">{{ current_page }}</span>
+
+        {% if has_next %}
+            <a href="?page={{ next_page }}">Вперёд →</a>
+        {% else %}
+            <span class="disabled">Вперёд →</span>
+        {% endif %}
+    </div>
+</body>
+</html>

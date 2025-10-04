@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рецепт блюда</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            text-transform: capitalize;
+        }
+
+        .ingredients-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .ingredient-item {
+            padding: 12px 15px;
+            margin: 8px 0;
+            background-color: #f9f9f9;
+            border-left: 4px solid #4CAF50;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ingredient-name {
+            font-weight: bold;
+            color: #2c3e50;
+            flex: 1;
+        }
+
+        .ingredient-amount {
+            color: #7f8c8d;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .no-recipe {
+            text-align: center;
+            color: #e74c3c;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .servings-info {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ request.resolver_match.kwargs.dish|default:"Блюдо" }}</h1>
+
+        {% if request.GET.servings %}
+            <div class="servings-info">
+                Количество порций: {{ request.GET.servings }}
+            </div>
+        {% endif %}
+
+        {% if recipe %}
+            <ul class="ingredients-list">
+                {% for ingredient, amount in recipe.items %}
+                    <li class="ingredient-item">
+                        <span class="ingredient-name">{{ ingredient }}</span>
+                        <span class="ingredient-amount">{{ amount }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="no-recipe">
+                Рецепт для этого блюда не найден
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
