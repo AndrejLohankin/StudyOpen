@@ -1,0 +1,290 @@
+[
+  {
+    "model": "books.book",
+    "pk": 1,
+    "fields": {
+      "name": "Война и мир",
+      "author": "Л.Н. Толстой",
+      "pub_date": "2018-02-27"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 2,
+    "fields": {
+      "name": "1984",
+      "author": "Джордж Оруэлл",
+      "pub_date": "2016-12-06"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 3,
+    "fields": {
+      "name": "Преступление и наказание",
+      "author": "Ф.М. Достоевский",
+      "pub_date": "2017-05-12"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 4,
+    "fields": {
+      "name": "Гарри Поттер и философский камень",
+      "author": "Дж.К. Роулинг",
+      "pub_date": "2019-01-15"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 5,
+    "fields": {
+      "name": "Мастер и Маргарита",
+      "author": "Михаил Булгаков",
+      "pub_date": "2018-09-03"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 6,
+    "fields": {
+      "name": "Анна Каренина",
+      "author": "Л.Н. Толстой",
+      "pub_date": "2018-09-03"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 7,
+    "fields": {
+      "name": "Гордость и предубеждение",
+      "author": "Джейн Остин",
+      "pub_date": "2020-03-22"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 8,
+    "fields": {
+      "name": "Убить пересмешника",
+      "author": "Харпер Ли",
+      "pub_date": "2019-11-30"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 9,
+    "fields": {
+      "name": "Братья Карамазовы",
+      "author": "Ф.М. Достоевский",
+      "pub_date": "2017-08-14"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 10,
+    "fields": {
+      "name": "Граф Монте-Кристо",
+      "author": "Александр Дюма",
+      "pub_date": "2021-01-02"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 11,
+    "fields": {
+      "name": "Алиса в Стране чудес",
+      "author": "Льюис Кэрролл",
+      "pub_date": "2020-07-18"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 12,
+    "fields": {
+      "name": "Маленький принц",
+      "author": "Антуан де Сент-Экзюпери",
+      "pub_date": "2019-04-05"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 13,
+    "fields": {
+      "name": "Шерлок Холмс: Исследования",
+      "author": "Артур Конан Дойл",
+      "pub_date": "2021-01-02"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 14,
+    "fields": {
+      "name": "Три товарища",
+      "author": "Эрих Мария Ремарк",
+      "pub_date": "2018-09-07"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 15,
+    "fields": {
+      "name": "На Западном фронте без перемен",
+      "author": "Эрих Мария Ремарк",
+      "pub_date": "2018-09-07"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 16,
+    "fields": {
+      "name": "451 градус по Фаренгейту",
+      "author": "Рэй Брэдбери",
+      "pub_date": "2017-10-21"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 17,
+    "fields": {
+      "name": "Сто лет одиночества",
+      "author": "Габриэль Гарсиа Маркес",
+      "pub_date": "2020-02-14"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 18,
+    "fields": {
+      "name": "Идиот",
+      "author": "Ф.М. Достоевский",
+      "pub_date": "2017-05-12"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 19,
+    "fields": {
+      "name": "Отцы и дети",
+      "author": "И.С. Тургенев",
+      "pub_date": "2019-06-12"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 20,
+    "fields": {
+      "name": "Евгений Онегин",
+      "author": "А.С. Пушкин",
+      "pub_date": "2018-05-30"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 21,
+    "fields": {
+      "name": "Гроза",
+      "author": "А.Н. Островский",
+      "pub_date": "2020-11-09"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 22,
+    "fields": {
+      "name": "Тихий Дон",
+      "author": "М.А. Шолохов",
+      "pub_date": "2019-08-23"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 23,
+    "fields": {
+      "name": "Собачье сердце",
+      "author": "Михаил Булгаков",
+      "pub_date": "2018-09-21"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 24,
+    "fields": {
+      "name": "Золотой телёнок",
+      "author": "Илья Ильф, Евгений Петров",
+      "pub_date": "2021-03-15"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 25,
+    "fields": {
+      "name": "Двенадцать стульев",
+      "author": "Илья Ильф, Евгений Петров",
+      "pub_date": "2021-03-15"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 26,
+    "fields": {
+      "name": "Над пропастью во ржи",
+      "author": "Джером Дэвид Сэлинджер",
+      "pub_date": "2016-12-06"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 27,
+    "fields": {
+      "name": "Портрет Дориана Грея",
+      "author": "Оскар Уайльд",
+      "pub_date": "2020-09-01"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 28,
+    "fields": {
+      "name": "Фауст",
+      "author": "Иоганн Вольфганг Гёте",
+      "pub_date": "2019-12-25"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 29,
+    "fields": {
+      "name": "Доктор Живаго",
+      "author": "Борис Пастернак",
+      "pub_date": "2018-11-11"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 30,
+    "fields": {
+      "name": "Жизнь взаймы",
+      "author": "Эрих Мария Ремарк",
+      "pub_date": "2018-09-07"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 31,
+    "fields": {
+      "name": "Пиковая дама",
+      "author": "А.С. Пушкин",
+      "pub_date": "2018-05-30"
+    }
+  },
+  {
+    "model": "books.book",
+    "pk": 32,
+    "fields": {
+      "name": "Человек в поисках смысла",
+      "author": "Виктор Франкл",
+      "pub_date": "2020-01-30"
+    }
+  }
+]

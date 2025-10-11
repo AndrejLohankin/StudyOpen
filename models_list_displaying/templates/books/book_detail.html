@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ book.name }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .book-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            max-width: 600px;
+            border-radius: 8px;
+        }
+        h1 { color: #007BFF; }
+        p { font-size: 1.1em; margin: 10px 0; }
+        a { color: #007BFF; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="book-card">
+        <h1>{{ book.name }}</h1>
+        <p><strong>Автор:</strong> {{ book.author }}</p>
+        <p><strong>Дата публикации:</strong> {{ book.pub_date|date:"d.m.Y" }}</p>
+    </div>
+    <p><a href="{% url 'books_list' %}">← Назад к каталогу</a></p>
+</body>
+</html>
