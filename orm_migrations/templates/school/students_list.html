@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Список учеников{% endblock %}
+
+{% block content %}
+    <h1>Список учеников</h1>
+    {% for student in students %}
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ student.name }}</h5>
+                <!-- Вложенный цикл для отображения учителей -->
+                <p class="card-text">
+                    Учителя:
+                    {% for teacher in student.teachers.all %}
+                        <br><span class="badge badge-primary">{{ teacher.name }}: {{ teacher.subject }}</span>
+                    {% empty %}
+                        <br><em>Нет назначенных учителей</em>
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
