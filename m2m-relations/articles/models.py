@@ -18,8 +18,6 @@ class Article(models.Model):
     text = models.TextField(verbose_name='Текст')
     published_at = models.DateTimeField(verbose_name='Дата публикации')
     image = models.ImageField(upload_to='articles/', blank=True, null=True, verbose_name='Изображение')
-
-    # Связь многие-ко-многим с Tag через промежуточную модель Scope
     tags = models.ManyToManyField(Tag, through='Scope', related_name='articles', verbose_name='Разделы')
 
     class Meta:
@@ -39,7 +37,6 @@ class Scope(models.Model):
     class Meta:
         verbose_name = 'Тематика статьи'
         verbose_name_plural = 'Тематики статей'
-        # Уникальность пары article-tag, чтобы не было дубликатов
         unique_together = ('article', 'tag')
 
     def __str__(self):
