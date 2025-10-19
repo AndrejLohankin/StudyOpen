@@ -1,0 +1,50 @@
+### GET request to example server
+GET http://127.0.0.1:8000/api/sensors/
+###
+GET http://127.0.0.1:8000/api/sensors/1/
+###
+POST http://127.0.0.1:8000/api/sensors/
+Content-Type: application/json
+
+{
+  "name": "Новый датчик",
+  "description": "Описание датчика"
+}
+###
+POST http://127.0.0.1:8000/api/sensors/
+Content-Type: application/json
+
+{
+  "name": "Новый датчик 2",
+  "description": "Описание датчика 2"
+}
+###
+# создание датчика
+POST http://127.0.0.1:8000/api/sensors/
+Content-Type: application/json
+
+{
+  "name": "ESP32",
+  "description": "Датчик на кухне за холодильником"
+}
+###
+# обновление датчика
+PATCH  http://127.0.0.1:8000/api/sensors/3/update/
+Content-Type: application/json
+
+{
+  "description": "Перенес датчик на балкон"
+}
+###
+# добавление измерения
+POST http://127.0.0.1:8000/api/measurements/
+Content-Type: application/json
+
+{
+  "sensor": 1,
+  "temperature": 22.3
+}
+###
+# получение информации по датчику
+GET http://127.0.0.1:8000/api/sensors/1/
+Content-Type: application/json
