@@ -1,0 +1,66 @@
+### Регистрация
+POST http://127.0.0.1:5000/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "securepassword"
+}
+
+###
+
+### Вход
+POST http://127.0.0.1:5000/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "securepassword"
+}
+
+> {%
+    client.global.set("auth_token", response.body.token);
+%}
+
+###
+
+### Создание объявления
+POST http://127.0.0.1:5000/ads
+Content-Type: application/json
+Authorization: {{auth_token}}
+
+{
+  "title": "Продам кота77",
+  "description": "Кот отличный, умный"
+}
+
+> {%
+    client.global.set("ad_id", response.body.id);
+%}
+
+###
+
+### Получение одного объявления
+GET http://127.0.0.1:5000/ads/{{ad_id}}
+
+###
+
+### Получение всех объявлений
+GET http://127.0.0.1:5000/ads
+
+###
+
+### Редактирование объявления
+PUT http://127.0.0.1:5000/ads/2
+Content-Type: application/json
+Authorization: dummy_token_1
+
+{
+  "title": "Продам кота дешево",
+  "description": "Кот очень умный, почти человек"
+}
+
+###
+### Удаление объявления
+DELETE http://127.0.0.1:5000/ads/{{ad_id}}
+Authorization: {{auth_token}}
