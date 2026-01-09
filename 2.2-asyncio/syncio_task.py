@@ -15,7 +15,7 @@ DB_CONFIG = {
     'port': 5432,
     'database': 'starwars_db_pg',
     'user': 'postgres',
-    'password': '98199819'
+    'password': 'your_password'
 }
 
 # SQL для создания таблицы
@@ -132,4 +132,5 @@ if __name__ == "__main__":
     main()
     end_time = time.time()
     elapsed_time = end_time - start_time
+
     print(f"Время выполнения синхронного скрипта: {elapsed_time:.2f} секунд")
