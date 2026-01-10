@@ -1,0 +1,99 @@
+### Убедитесь, что сервер запущен на http://localhost:8000
+@baseUrl = http://127.0.0.1:8000
+
+###
+
+# @name create_advertisement
+POST {{baseUrl}}/advertisement/
+Content-Type: application/json
+
+{
+  "title": "Продам ноутбук",
+  "description": "Рабочий ноутбук, состояние хорошее",
+  "price": 25000.0,
+  "author": "Иван Петров"
+}
+
+###
+
+# @name get_advertisement
+GET {{baseUrl}}/advertisement/{{create_advertisement.response.body.$.id}}
+
+###
+
+# @name update_advertisement
+PATCH {{baseUrl}}/advertisement/{{create_advertisement.response.body.$.id}}
+Content-Type: application/json
+
+{
+  "price": 23000.0,
+  "description": "Отличный ноутбук, немного подержанный"
+}
+
+###
+
+# @name search_by_title
+GET {{baseUrl}}/advertisement/?title=ноутбук
+
+###
+
+# @name search_by_author
+GET {{baseUrl}}/advertisement/?author=Иван
+
+###
+
+# @name search_by_price_range
+GET {{baseUrl}}/advertisement/?min_price=20000&max_price=30000
+
+###
+
+# @name create_second_advertisement
+POST {{baseUrl}}/advertisement/
+Content-Type: application/json
+
+{
+  "title": "Куплю монитор",
+  "description": "Ищу хороший монитор 24 дюйма",
+  "price": 8000.0,
+  "author": "Мария Сидорова"
+}
+
+###
+
+# @name search_by_multiple_params
+GET {{baseUrl}}/advertisement/?title=ноутбук&min_price=22000
+
+###
+
+# @name delete_advertisement
+DELETE {{baseUrl}}/advertisement/{{create_advertisement.response.body.$.id}}
+
+###
+
+# @name get_deleted_advertisement
+GET {{baseUrl}}/advertisement/{{create_advertisement.response.body.$.id}}
+
+###
+
+# @name create_test_ad_for_delete
+POST {{baseUrl}}/advertisement/
+Content-Type: application/json
+
+{
+  "title": "Тестовое объявление для удаления",
+  "description": "Это объявление будет удалено",
+  "price": 5000.0,
+  "author": "Тестовый Автор"
+}
+
+###
+
+# @name delete_test_ad
+DELETE {{baseUrl}}/advertisement/{{create_test_ad_for_delete.response.body.$.id}}
+
+###
+
+# @name health_check
+GET {{baseUrl}}/
+
+###
