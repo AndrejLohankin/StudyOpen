@@ -63,4 +63,5 @@ Authorization: dummy_token_1
 ###
 ### Удаление объявления
 DELETE http://127.0.0.1:5000/ads/{{ad_id}}
+
 Authorization: {{auth_token}}
