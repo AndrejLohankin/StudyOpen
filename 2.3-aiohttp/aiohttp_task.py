@@ -1,9 +1,10 @@
 from aiohttp import web
-import sqlite3
+import aiosqlite
 import hashlib
 import secrets
 import re
 import json
+import asyncio
 
 DB_NAME = 'ads.db'
 
@@ -30,29 +31,27 @@ HTML_TEMPLATE = '''<!DOCTYPE html>
 
 routes = web.RouteTableDef()
 
-def init_db():
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL,
-            salt TEXT NOT NULL
-        )
-    ''')
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS ads (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            description TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            owner_id INTEGER NOT NULL,
-            FOREIGN KEY (owner_id) REFERENCES users (id)
-        )
-    ''')
-    conn.commit()
-    conn.close()
+async def init_db():
+    async with aiosqlite.connect(DB_NAME) as db:
+        await db.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                salt TEXT NOT NULL
+            )
+        ''')
+        await db.execute('''
+            CREATE TABLE IF NOT EXISTS ads (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                description TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                owner_id INTEGER NOT NULL,
+                FOREIGN KEY (owner_id) REFERENCES users (id)
+            )
+        ''')
+        await db.commit()
 
 def hash_password(password, salt):
     return hashlib.pbkdf2_hmac('sha256', password.encode(), salt.encode(), 100000)
@@ -92,16 +91,15 @@ async def register(request):
     password_hash = hash_password(password, salt)
 
     try:
-        conn = sqlite3.connect(DB_NAME)
-        cursor = conn.cursor()
-        cursor.execute('INSERT INTO users (email, password_hash, salt) VALUES (?, ?, ?)',
-                       (email, password_hash.hex(), salt))
-        conn.commit()
-        user_id = cursor.lastrowid
-        conn.close()
+        async with aiosqlite.connect(DB_NAME) as db:
+            await db.execute('INSERT INTO users (email, password_hash, salt) VALUES (?, ?, ?)',
+                             (email, password_hash.hex(), salt))
+            await db.commit()
+            cursor = await db.execute('SELECT last_insert_rowid();')
+            user_id_tuple = await cursor.fetchone()
+            user_id = user_id_tuple[0]
         return web.json_response({'id': user_id}, status=201)
-    except sqlite3.IntegrityError:
-        conn.close()
+    except aiosqlite.IntegrityError:
         raise web.HTTPBadRequest(text=json.dumps({'error': 'Email already exists'}), content_type='application/json')
 
 @routes.post('/login')
@@ -113,11 +111,9 @@ async def login(request):
     if not email or not password:
         raise web.HTTPBadRequest(text=json.dumps({'error': 'Invalid input'}), content_type='application/json')
 
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute('SELECT id, password_hash, salt FROM users WHERE email = ?', (email,))
-    row = cursor.fetchone()
-    conn.close()
+    async with aiosqlite.connect(DB_NAME) as db:
+        cursor = await db.execute('SELECT id, password_hash, salt FROM users WHERE email = ?', (email,))
+        row = await cursor.fetchone()
 
     if not row:
         raise web.HTTPUnauthorized(text=json.dumps({'error': 'Invalid credentials'}), content_type='application/json')
@@ -142,13 +138,13 @@ async def create_ad(request):
     if not title or not description:
         raise web.HTTPBadRequest(text=json.dumps({'error': 'Title and description required'}), content_type='application/json')
 
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute('INSERT INTO ads (title, description, owner_id) VALUES (?, ?, ?)',
-                   (title, description, user_id))
-    ad_id = cursor.lastrowid
-    conn.commit()
-    conn.close()
+    async with aiosqlite.connect(DB_NAME) as db:
+        await db.execute('INSERT INTO ads (title, description, owner_id) VALUES (?, ?, ?)',
+                         (title, description, user_id))
+        await db.commit()
+        cursor = await db.execute('SELECT last_insert_rowid();')
+        ad_id_tuple = await cursor.fetchone()
+        ad_id = ad_id_tuple[0]
 
     return web.json_response({'id': ad_id}, status=201)
 
@@ -159,14 +155,12 @@ async def get_ad(request):
     except ValueError:
         raise web.HTTPBadRequest(text=json.dumps({'error': 'Invalid ad ID'}), content_type='application/json')
 
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute('''
-        SELECT id, title, description, created_at, owner_id
-        FROM ads WHERE id = ?
-    ''', (ad_id,))
-    row = cursor.fetchone()
-    conn.close()
+    async with aiosqlite.connect(DB_NAME) as db:
+        cursor = await db.execute('''
+            SELECT id, title, description, created_at, owner_id
+            FROM ads WHERE id = ?
+        ''', (ad_id,))
+        row = await cursor.fetchone()
 
     if not row:
         raise web.HTTPNotFound(text=json.dumps({'error': 'Ad not found'}), content_type='application/json')
@@ -181,14 +175,12 @@ async def get_ad(request):
 
 @routes.get('/ads')
 async def get_all_ads(request):
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute('''
-        SELECT id, title, description, created_at, owner_id
-        FROM ads
-    ''')
-    rows = cursor.fetchall()
-    conn.close()
+    async with aiosqlite.connect(DB_NAME) as db:
+        cursor = await db.execute('''
+            SELECT id, title, description, created_at, owner_id
+            FROM ads
+        ''')
+        rows = await cursor.fetchall()
 
     ads = []
     for row in rows:
@@ -221,26 +213,22 @@ async def update_ad(request):
     if not title and not description:
         raise web.HTTPBadRequest(text=json.dumps({'error': 'Title or description required'}), content_type='application/json')
 
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute('SELECT owner_id FROM ads WHERE id = ?', (ad_id,))
-    row = cursor.fetchone()
+    async with aiosqlite.connect(DB_NAME) as db:
+        cursor = await db.execute('SELECT owner_id FROM ads WHERE id = ?', (ad_id,))
+        row = await cursor.fetchone()
 
-    if not row:
-        conn.close()
-        raise web.HTTPNotFound(text=json.dumps({'error': 'Ad not found'}), content_type='application/json')
+        if not row:
+            raise web.HTTPNotFound(text=json.dumps({'error': 'Ad not found'}), content_type='application/json')
 
-    if row[0] != user_id:
-        conn.close()
-        raise web.HTTPForbidden(text=json.dumps({'error': 'Forbidden'}), content_type='application/json')
+        if row[0] != user_id:
+            raise web.HTTPForbidden(text=json.dumps({'error': 'Forbidden'}), content_type='application/json')
 
-    if title:
-        cursor.execute('UPDATE ads SET title = ? WHERE id = ?', (title, ad_id))
-    if description:
-        cursor.execute('UPDATE ads SET description = ? WHERE id = ?', (description, ad_id))
+        if title:
+            await db.execute('UPDATE ads SET title = ? WHERE id = ?', (title, ad_id))
+        if description:
+            await db.execute('UPDATE ads SET description = ? WHERE id = ?', (description, ad_id))
 
-    conn.commit()
-    conn.close()
+        await db.commit()
 
     return web.json_response({'message': 'Ad updated'})
 
@@ -256,30 +244,37 @@ async def delete_ad(request):
     if not user_id:
         raise web.HTTPUnauthorized(text=json.dumps({'error': 'Unauthorized'}), content_type='application/json')
 
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute('SELECT owner_id FROM ads WHERE id = ?', (ad_id,))
-    row = cursor.fetchone()
+    async with aiosqlite.connect(DB_NAME) as db:
+        cursor = await db.execute('SELECT owner_id FROM ads WHERE id = ?', (ad_id,))
+        row = await cursor.fetchone()
 
-    if not row:
-        conn.close()
-        raise web.HTTPNotFound(text=json.dumps({'error': 'Ad not found'}), content_type='application/json')
+        if not row:
+            raise web.HTTPNotFound(text=json.dumps({'error': 'Ad not found'}), content_type='application/json')
 
-    if row[0] != user_id:
-        conn.close()
-        raise web.HTTPForbidden(text=json.dumps({'error': 'Forbidden'}), content_type='application/json')
+        if row[0] != user_id:
+            raise web.HTTPForbidden(text=json.dumps({'error': 'Forbidden'}), content_type='application/json')
 
-    cursor.execute('DELETE FROM ads WHERE id = ?', (ad_id,))
-    conn.commit()
-    conn.close()
+        await db.execute('DELETE FROM ads WHERE id = ?', (ad_id,))
+        await db.commit()
 
     return web.json_response({'message': 'Ad deleted'})
 
-def main():
-    init_db()
+async def init_app():
+    await init_db()
     app = web.Application()
     app.add_routes(routes)
-    web.run_app(app, host='0.0.0.0', port=5000)
+    return app
+
+async def main():
+    app = await init_app()
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, host='0.0.0.0', port=5000)
+    await site.start()
+    print(f"======== Running on http://0.0.0.0:5000 ========")
+    # Keep the app running
+    while True:
+        await asyncio.sleep(3600)  # Sleep for an hour
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())
