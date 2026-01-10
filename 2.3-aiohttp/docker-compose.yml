@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  ads-api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ads-db-data:/app/ads.db
+
+volumes:
+  ads-db-data:
