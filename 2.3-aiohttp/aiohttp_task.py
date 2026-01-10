@@ -279,7 +279,7 @@ def main():
     init_db()
     app = web.Application()
     app.add_routes(routes)
-    web.run_app(app, host='127.0.0.2', port=5000)
+    web.run_app(app, host='0.0.0.0', port=5000)
 
 if __name__ == '__main__':
     main()
